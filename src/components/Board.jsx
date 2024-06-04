@@ -10,16 +10,28 @@ export default function Board() {
     ["", "", "", "", "", "", ""],
     ["", "", "", "", "", "", ""],
   ]);
+  const [hoveredColumn, setHoveredColumn] = useState(null);
   const [currPlayer, setCurrPlayer] = useState("X");
   const [oppPlayer, setOppPlayer] = useState("O");
   const [gameOver, setGameOver] = useState(false);
 
   const checkWin = (row, column, ch) => {
-    // EXERCISE: This function does not cover all possible winning combinations. Edit the code to cover all possibilities. A working solution in C# (don't worry--if you know JavaScript you should understand most of it) exists at https://dotnetfiddle.net/FZGpbS Line #128
     try {
       if (board[row + 1][column] === ch) {
         if (board[row + 2][column] === ch) {
           if (board[row + 3][column] === ch) {
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      if (board[row - 1][column] === ch) {
+        if (board[row - 2][column] === ch) {
+          if (board[row - 3][column] === ch) {
             return true;
           }
         }
@@ -146,15 +158,27 @@ export default function Board() {
         ) : (
           <span className="text-blue-600">Blue</span>
         )}
-        's Turn
+        s Turn
       </h2>
       <div
         onClick={gameOver ? null : handleClick}
-        className="grid grid-cols-7 gap-2 w-2/3 bg-blue-700 p-6 rounded-3xl"
+        className="grid grid-cols-7 w-2/3 bg-blue-700 p-6 rounded-3xl"
       >
         {board.map((row, i) => {
           return row.map((ch, j) => {
-            return <Slots ch={ch} y={i} x={j} />;
+            return (
+              <div
+                key={j}
+                className={`${j === hoveredColumn ? "bg-blue-400 " : ""} ${
+                  i === 0 ? "rounded-t-2xl" : ""
+                }
+                ${i === board.length - 1 ? "rounded-b-2xl" : ""}`}
+                onMouseEnter={() => setHoveredColumn(j)}
+                onMouseLeave={() => setHoveredColumn(null)}
+              >
+                <Slots ch={ch} y={i} x={j} />
+              </div>
+            );
           });
         })}
       </div>
